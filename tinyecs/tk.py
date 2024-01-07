@@ -1,15 +1,16 @@
 from ._component import Component, ComponentRegistry
 from ._system import System
 import tkinter as tk
+from dataclasses import dataclass
 
 
+@dataclass
 class TkWindow(Component):
     window: tk.Tk
 
 
-def create_inspector():
+def create_inspector() -> TkWindow:
     window = tk.Tk()
-    window.title = "pyball control"
     title = tk.Label(text="Inspector")
     title.pack()
     frame = tk.Frame(borderwidth=1)
@@ -30,7 +31,7 @@ def create_inspector():
 
 
 class TkEventQueueSystem(System):
-    def onFrame(self, cr: ComponentRegistry, dt: float):
+    def onFrame(self, cr: ComponentRegistry, dt: float) -> None:
         for window in cr.query_single(TkWindow):
-            window.update_idletasks()
-            window.update()
+            window.window.update_idletasks()
+            window.window.update()

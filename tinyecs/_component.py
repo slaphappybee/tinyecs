@@ -13,7 +13,7 @@ C2 = TypeVar("C2", bound=Component)
 
 
 class ComponentRegistry:
-    def __init__(self):
+    def __init__(self) -> None:
         self._registry: Dict[str, Dict[int, Component]] = dict()
 
     def _gen_query(self, mask: Tuple[Type[Component], ...]) -> Iterator[Tuple[Component, ...]]:
@@ -24,13 +24,13 @@ class ComponentRegistry:
 
     def query_single(self, ctype: Type[C1]) -> Iterator[C1]:
         for c, in self._gen_query((ctype, )):
-            yield c
+            yield cast(C1, c)
 
     def query2(self, mask: Tuple[Type[C1], Type[C2]]) -> Iterator[Tuple[C1, C2]]:
-        return cast(Iterator, self._gen_query(mask))
+        return cast(Iterator[Tuple[C1, C2]], self._gen_query(mask))
 
     @property
-    def registry(self):
+    def registry(self) -> Dict[str, Dict[int, Component]]:
         return self._registry
 
 

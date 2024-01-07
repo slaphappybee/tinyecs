@@ -2,7 +2,7 @@ from typing import List, Self
 from ._component import Component, ComponentRegistry
 
 
-class Entity:
+class Entity(Component):
     def __init__(self, cr: ComponentRegistry):
         cr.registry.setdefault(Entity.__name__, dict())
         cr.registry[Entity.__name__][id(self)] = self
@@ -16,7 +16,7 @@ class Entity:
 
     @classmethod
     def create(cls, cr: ComponentRegistry, *args: Component) -> Self:
-        entity = Entity(cr)
+        entity = cls(cr)
         for component in args:
             entity.register(cr, component)
         return entity

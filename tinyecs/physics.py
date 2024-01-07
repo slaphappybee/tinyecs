@@ -22,7 +22,7 @@ class PlatformControl2D(Component):
 
 
 class PlatformControlSystem(System):
-    def onFrame(self, cr: ComponentRegistry, delta: float):
+    def onFrame(self, cr: ComponentRegistry, delta: float) -> None:
         keys = pygame.key.get_pressed()
 
         for c_pla, c_phy in cr.query2((PlatformControl2D, Physics2D)):
@@ -52,7 +52,7 @@ class PlatformControlSystem(System):
 
 
 class PhyicsSystem(System):
-    def onFrame(self, cr: ComponentRegistry, delta: float):
+    def onFrame(self, cr: ComponentRegistry, delta: float) -> None:
         viewport_size = list(cr.query_single(ViewportProperties))[0].size
 
         for c_physics, c_position in cr.query2((Physics2D, Position2D)):
@@ -68,6 +68,6 @@ class GravitySystem(System):
     def __init__(self, strength: float):
         self.strength = strength
 
-    def onFrame(self, cr: ComponentRegistry, delta: float):
+    def onFrame(self, cr: ComponentRegistry, delta: float) -> None:
         for physics in cr.query_single(Physics2D):
             physics.velocity = physics.velocity + pygame.Vector2(0, self.strength) * delta

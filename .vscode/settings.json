@@ -1,0 +1,12 @@
+{
+    "python.linting.mypyEnabled": true,
+    "python.linting.enabled": true,
+    "python.linting.mypyArgs": [
+        "--follow-imports=silent",
+        "--show-column-numbers",
+        "--no-pretty",
+        "--check-untyped-defs",
+        "--disallow-untyped-defs",
+        "--strict",
+    ]
+}

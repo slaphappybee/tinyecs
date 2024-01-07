@@ -10,11 +10,11 @@ pygame.init()
 
 clock = pygame.time.Clock()
 running = True
-dt = 0
 
 SCREEN_HEIGHT = 720
 
-def load_img(name):
+
+def load_img(name: str) -> pygame.Surface:
     return pygame.transform.scale_by(pygame.image.load(name), 4)
 
 
@@ -53,7 +53,7 @@ trees = ecs.Entity.create_named(
 )
 
 
-def pygame_register_viewport():
+def pygame_register_viewport() -> None:
     size = (1280, SCREEN_HEIGHT)
     screen = pygame.display.set_mode(size, vsync=1)
     ecs.Entity.create_named(
@@ -75,6 +75,7 @@ sr.registerAll(
 )
 
 
+dt = 0.0
 while running:
     # poll for events
     # pygame.QUIT event means the user clicked X to close your window
@@ -82,7 +83,7 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
-    dt = clock.tick(50) / 1000
+    dt = clock.tick(50) / 1000.0
 
     sr.onFrame(cr, dt)
 

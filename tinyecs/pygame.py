@@ -32,7 +32,7 @@ class ScreenHandle(Component):
 
 
 class CanvasSystem(System):
-    def onFrame(self, cr: ComponentRegistry, delta: float):
+    def onFrame(self, cr: ComponentRegistry, delta: float) -> None:
         screen = list(cr.query_single(ScreenHandle))[0].screen
         screen.fill("skyblue")
 
