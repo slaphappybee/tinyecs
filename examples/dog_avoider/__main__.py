@@ -1,6 +1,4 @@
 import pygame
-from typing import Dict, Any, List, Type, Iterator, Tuple, TypeVar, cast
-from dataclasses import dataclass
 import tinyecs as ecs
 import tinyecs.physics as ephy
 import tinyecs.pygame as epyg

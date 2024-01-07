@@ -29,7 +29,6 @@ def create_inspector() -> TkWindow:
     return TkWindow(window)
 
 
-
 class TkEventQueueSystem(System):
     def onFrame(self, cr: ComponentRegistry, dt: float) -> None:
         for window in cr.query_single(TkWindow):

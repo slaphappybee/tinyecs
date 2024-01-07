@@ -9,7 +9,7 @@ class Entity(Component):
         self.components: List[Component] = list()
         self.name = f"entity-{id(self)}"
 
-    def register(self, cr:ComponentRegistry, component: Component) -> None:
+    def register(self, cr: ComponentRegistry, component: Component) -> None:
         classname = component.__class__.__name__
         cr.registry.setdefault(classname, dict())
         cr.registry[classname][id(self)] = component

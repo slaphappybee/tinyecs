@@ -10,10 +10,12 @@ class Position2D(Component):
     position: pygame.Vector2
     size: pygame.Vector2
 
+
 @dataclass
 class Shape2D(Component):
     shape: str
     color: str
+
 
 @dataclass
 class Sprite2D(Component):
@@ -41,8 +43,8 @@ class CanvasSystem(System):
             for yi in range(0, len(c_tileset.grid)):
                 for xi in range(0, len(c_tileset.grid[0])):
                     tile = c_tileset.grid[yi][xi]
-                    target = pygame.Rect(c_position.position + 
-                        pygame.Vector2(tile_size.x * xi, tile_size.y * yi), tile_size)
+                    target = pygame.Rect(
+                        c_position.position + pygame.Vector2(tile_size.x * xi, tile_size.y * yi), tile_size)
                     screen.blit(c_tileset.tileset[tile], target)
 
         for c_shape, c_position in cr.query2((Shape2D, Position2D)):

@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Dict, Tuple, Iterator, cast, Type, Any, TypeVar
+from typing import Dict, Tuple, Iterator, cast, Type, TypeVar
 from pygame import Vector2
 
 

@@ -8,5 +8,6 @@
         "--check-untyped-defs",
         "--disallow-untyped-defs",
         "--strict",
-    ]
+    ],
+    "python.linting.flake8Enabled": true
 }
