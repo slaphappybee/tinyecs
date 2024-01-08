@@ -1,7 +1,7 @@
 from ._component import Component, ComponentRegistry, ViewportProperties
 from ._system import System
 from ._utils import clamp
-from .pygame import Position2D
+from .pygame import Position2D, Transform2D
 from dataclasses import dataclass
 import pygame
 import numpy
@@ -25,20 +25,21 @@ class PlatformControlSystem(System):
     def onFrame(self, cr: ComponentRegistry, delta: float) -> None:
         keys = pygame.key.get_pressed()
 
-        for c_pla, c_phy in cr.query2((PlatformControl2D, Physics2D)):
-
+        for c_pla, c_phy, c_tra in cr.query3((PlatformControl2D, Physics2D, Transform2D)):
             if keys[pygame.K_a]:
                 c_phy.velocity.x = clamp(
                     max_value=-1 * c_pla.hrztl_min_speed,
                     min_value=-1 * c_pla.hrztl_max_speed,
                     value=c_phy.velocity.x + -1 * c_pla.hrztl_accel * delta
                 )
+                c_tra.hflip = True
             elif keys[pygame.K_d]:
                 c_phy.velocity.x = clamp(
                     min_value=1 * c_pla.hrztl_min_speed,
                     max_value=1 * c_pla.hrztl_max_speed,
                     value=c_phy.velocity.x + 1 * c_pla.hrztl_accel * delta
                 )
+                c_tra.hflip = False
             else:
                 decel = numpy.sign(c_phy.velocity.x) * c_pla.hrztl_decel * delta
                 new_velocity_x = c_phy.velocity.x - decel

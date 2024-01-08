@@ -25,6 +25,7 @@ player = ecs.Entity.create_named(
     epyg.Position2D(pygame.Vector2(300, 400), pygame.Vector2(40, 108)),
     ephy.Physics2D(pygame.Vector2(0, 0)),
     epyg.Sprite2D(load_img("examples/dog_avoider/hat_man.png")),
+    epyg.Transform2D(hflip=False),
     ephy.PlatformControl2D(400, 1600, 200, 600, 600),
 )
 

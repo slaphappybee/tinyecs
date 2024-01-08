@@ -18,6 +18,11 @@ class Shape2D(Component):
 
 
 @dataclass
+class Transform2D(Component):
+    hflip: bool
+
+
+@dataclass
 class Sprite2D(Component):
     surface: pygame.Surface
 
@@ -35,7 +40,7 @@ class ScreenHandle(Component):
 
 class CanvasSystem(System):
     def onFrame(self, cr: ComponentRegistry, delta: float) -> None:
-        screen = list(cr.query_single(ScreenHandle))[0].screen
+        screen = cr.query_unique(ScreenHandle).screen
         screen.fill("skyblue")
 
         for c_tileset, c_position in cr.query2((Tileframe2D, Position2D)):
@@ -53,7 +58,10 @@ class CanvasSystem(System):
             if c_shape.shape == 'rectangle':
                 pygame.draw.rect(screen, c_shape.color, pygame.Rect(c_position.position, c_position.size))
 
-        for c_sprite, c_position in cr.query2((Sprite2D, Position2D)):
-            screen.blit(c_sprite.surface, pygame.Rect(c_position.position, c_position.size))
+        for c_sprite, c_position, c_transform in cr.query3((Sprite2D, Position2D, Transform2D)):
+            screen.blit(
+                pygame.transform.flip(c_sprite.surface, c_transform.hflip, False),
+                pygame.Rect(c_position.position, c_position.size)
+            )
 
         pygame.display.flip()
