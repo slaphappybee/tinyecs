@@ -1,7 +1,9 @@
+import os
 import pygame
 import tinyecs as ecs
 import tinyecs.physics as ephy
 import tinyecs.pygame as epyg
+from typing import Dict
 
 # pygame setup
 pygame.init()
@@ -12,11 +14,30 @@ running = True
 SCREEN_HEIGHT = 720
 
 
-def load_img(name: str) -> pygame.Surface:
-    return pygame.transform.scale_by(pygame.image.load(name), 4)
-
-
 cr = ecs.ComponentRegistry()
+
+
+class DogAvoiderAssetLibrary:
+    def __init__(self, root_path: str) -> None:
+        self.root_path = root_path
+        self.assets: Dict[str, pygame.Surface] = dict()
+
+    def load(self) -> None:
+        for filename in os.listdir(self.root_path):
+            if filename.endswith(".png"):
+                self._load_asset(filename.replace(".png", ""))
+
+    def _load_asset(self, name: str) -> None:
+        path = os.path.join(self.root_path, name + ".png")
+        surface = pygame.transform.scale_by(pygame.image.load(path), 4)
+        self.assets[name] = surface
+
+    def get(self, name: str) -> pygame.Surface:
+        return self.assets[name]
+
+
+assets = DogAvoiderAssetLibrary("examples/dog_avoider")
+assets.load()
 
 
 player = ecs.Entity.create_named(
@@ -24,12 +45,20 @@ player = ecs.Entity.create_named(
     "player",
     epyg.Position2D(pygame.Vector2(300, 400), pygame.Vector2(40, 108)),
     ephy.Physics2D(pygame.Vector2(0, 0)),
-    epyg.Sprite2D(load_img("examples/dog_avoider/hat_man.png")),
+    epyg.Sprite2D(assets.get("hat_man")),
     epyg.Transform2D(hflip=False),
     ephy.PlatformControl2D(400, 1600, 200, 600, 600),
 )
 
-wall_sprite = load_img("examples/dog_avoider/background.png")
+dog = ecs.Entity.create_named(
+    cr,
+    "dog",
+    epyg.Position2D(pygame.Vector2(600, 600), pygame.Vector2(27, 15)),
+    epyg.Sprite2D(assets.get("dog")),
+    epyg.Transform2D(hflip=False)
+)
+
+wall_sprite = assets.get("background")
 walls = ecs.Entity.create_named(
     cr,
     "walls",
@@ -40,7 +69,7 @@ walls = ecs.Entity.create_named(
     epyg.Tileframe2D({0: wall_sprite}, [[0] * 8])
 )
 
-tree_sprite = load_img("examples/dog_avoider/trees.png")
+tree_sprite = assets.get("trees")
 trees = ecs.Entity.create_named(
     cr,
     "trees",
