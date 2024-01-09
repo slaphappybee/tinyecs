@@ -26,7 +26,7 @@ class ComponentRegistry:
     def query_single(self, ctype: Type[C1]) -> Iterator[C1]:
         for c, in self._gen_query((ctype, )):
             yield cast(C1, c)
-    
+
     def query_unique(self, ctype: Type[C1]) -> C1:
         values = list(self.query_single(ctype))
         assert len(values) == 1, f"for {ctype}"

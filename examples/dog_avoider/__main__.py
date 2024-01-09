@@ -4,6 +4,7 @@ import tinyecs as ecs
 import tinyecs.physics as ephy
 import tinyecs.pygame as epyg
 from typing import Dict
+from pygame import Vector2
 
 # pygame setup
 pygame.init()
@@ -20,20 +21,31 @@ cr = ecs.ComponentRegistry()
 class DogAvoiderAssetLibrary:
     def __init__(self, root_path: str) -> None:
         self.root_path = root_path
-        self.assets: Dict[str, pygame.Surface] = dict()
+        self.images: Dict[str, pygame.Surface] = dict()
+        self.sounds: Dict[str, pygame.mixer.Sound] = dict()
 
     def load(self) -> None:
         for filename in os.listdir(self.root_path):
             if filename.endswith(".png"):
-                self._load_asset(filename.replace(".png", ""))
+                self._load_image(filename.replace(".png", ""))
+            if filename.endswith(".mp3"):
+                self._load_sound(filename.replace(".mp3", ""))
 
-    def _load_asset(self, name: str) -> None:
+    def _load_image(self, name: str) -> None:
         path = os.path.join(self.root_path, name + ".png")
         surface = pygame.transform.scale_by(pygame.image.load(path), 4)
-        self.assets[name] = surface
+        self.images[name] = surface
 
-    def get(self, name: str) -> pygame.Surface:
-        return self.assets[name]
+    def _load_sound(self, name: str) -> None:
+        path = os.path.join(self.root_path, name + ".mp3")
+        sound = pygame.mixer.Sound(path)
+        self.sounds[name] = sound
+
+    def img(self, name: str) -> pygame.Surface:
+        return self.images[name]
+
+    def snd(self, name: str) -> pygame.mixer.Sound:
+        return self.sounds[name]
 
 
 assets = DogAvoiderAssetLibrary("examples/dog_avoider")
@@ -45,20 +57,38 @@ player = ecs.Entity.create_named(
     "player",
     epyg.Position2D(pygame.Vector2(300, 400), pygame.Vector2(40, 108)),
     ephy.Physics2D(pygame.Vector2(0, 0)),
-    epyg.Sprite2D(assets.get("hat_man")),
+    ephy.Gravity2D(),
+    epyg.Sprite2D(assets.img("hat_man")),
     epyg.Transform2D(hflip=False),
     ephy.PlatformControl2D(400, 1600, 200, 600, 600),
 )
+
+
+class DogFlag(ecs.Component):
+    pass
+
+
+class DogScript(ecs.System):
+    def onFrame(self, cr: ecs.ComponentRegistry, delta: float) -> None:
+        for _dog, xform, phy in cr.query3((DogFlag, epyg.Transform2D, ephy.Physics2D)):
+            if phy.velocity.x > 0:
+                xform.hflip = True
+            else:
+                xform.hflip = False
+
 
 dog = ecs.Entity.create_named(
     cr,
     "dog",
     epyg.Position2D(pygame.Vector2(600, 600), pygame.Vector2(27, 15)),
-    epyg.Sprite2D(assets.get("dog")),
-    epyg.Transform2D(hflip=False)
+    epyg.Sprite2D(assets.img("dog")),
+    epyg.Transform2D(hflip=False),
+    ephy.Physics2D(Vector2(300, 0)),
+    ephy.WaypointControl2D([Vector2(40, 600), Vector2(1150, 600)], 0),
+    DogFlag(),
 )
 
-wall_sprite = assets.get("background")
+wall_sprite = assets.img("background")
 walls = ecs.Entity.create_named(
     cr,
     "walls",
@@ -69,7 +99,7 @@ walls = ecs.Entity.create_named(
     epyg.Tileframe2D({0: wall_sprite}, [[0] * 8])
 )
 
-tree_sprite = assets.get("trees")
+tree_sprite = assets.img("trees")
 trees = ecs.Entity.create_named(
     cr,
     "trees",
@@ -94,12 +124,17 @@ def pygame_register_viewport() -> None:
 
 pygame_register_viewport()
 
+pygame.mixer.init()
+assets.snd("music").play(-1)
+
 sr = ecs.SystemRegistry()
 sr.registerAll(
     epyg.CanvasSystem(),
     ephy.GravitySystem(1200),
     ephy.PhyicsSystem(),
     ephy.PlatformControlSystem(),
+    ephy.WaypointControlSystem(),
+    DogScript()
 )
 
 
