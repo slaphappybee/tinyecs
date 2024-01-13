@@ -1,6 +1,6 @@
 {
-    "python.linting.mypyEnabled": true,
-    "python.linting.enabled": true,
+    "python.linting.mypyEnabled": false,
+    "python.linting.enabled": false,
     "python.linting.mypyArgs": [
         "--follow-imports=silent",
         "--show-column-numbers",
@@ -9,5 +9,5 @@
         "--disallow-untyped-defs",
         "--strict",
     ],
-    "python.linting.flake8Enabled": true
+    "python.linting.flake8Enabled": false
 }
