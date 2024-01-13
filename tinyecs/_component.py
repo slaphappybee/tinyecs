@@ -11,17 +11,21 @@ class Component:
 C1 = TypeVar("C1", bound=Component)
 C2 = TypeVar("C2", bound=Component)
 C3 = TypeVar("C3", bound=Component)
+C4 = TypeVar("C4", bound=Component)
 
 
 class ComponentRegistry:
     def __init__(self) -> None:
         self._registry: Dict[str, Dict[int, Component]] = dict()
+    
+    def reset(self) -> None:
+        self._registry = dict()
 
     def _gen_query(self, mask: Tuple[Type[Component], ...]) -> Iterator[Tuple[Component, ...]]:
         names = [mask_item.__name__ for mask_item in mask]
         entities = self._registry.get(names[0], dict()).keys()
         for e in entities:
-            yield tuple(self._registry[name][e] for name in names)
+            yield tuple(self._registry.get(name, dict()).get(e) for name in names)
 
     def query_single(self, ctype: Type[C1]) -> Iterator[C1]:
         for c, in self._gen_query((ctype, )):
@@ -37,6 +41,9 @@ class ComponentRegistry:
 
     def query3(self, mask: Tuple[Type[C1], Type[C2], Type[C3]]) -> Iterator[Tuple[C1, C2, C3]]:
         return cast(Iterator[Tuple[C1, C2, C3]], self._gen_query(mask))
+
+    def query4(self, mask: Tuple[Type[C1], Type[C2], Type[C3], Type[C4]]) -> Iterator[Tuple[C1, C2, C3, C4]]:
+        return cast(Iterator[Tuple[C1, C2, C3, C4]], self._gen_query(mask))
 
     @property
     def registry(self) -> Dict[str, Dict[int, Component]]:

@@ -93,7 +93,7 @@ class GravitySystem(System):
         for _gra, physics, c_position in cr.query3((Gravity2D, Physics2D, Position2D)):
             physics.velocity = physics.velocity + pygame.Vector2(0, self.strength) * delta
 
-            y_limit = viewport_size.y - 60
-            if c_position.position.y + c_position.size.y > y_limit:
-                c_position.position.y = y_limit - c_position.size.y
-                physics.velocity.y = 0
+            # y_limit = viewport_size.y - 60
+            # if c_position.position.y + c_position.size.y > y_limit:
+            #     c_position.position.y = y_limit - c_position.size.y
+            #     physics.velocity.y = 0
